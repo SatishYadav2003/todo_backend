@@ -15,6 +15,7 @@ const pool = new Pool({
     database: "todo_db",  // Your database name
     password: "satishyadav",  // Your RDS password
     port: 5432,
+    ssl: { rejectUnauthorized: false }
 });
 
 // Check Database Connection
