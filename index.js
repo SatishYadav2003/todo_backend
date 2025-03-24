@@ -1,5 +1,3 @@
-/* Backend: Node.js + Express + PostgreSQL (CommonJS) */
-
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
@@ -10,21 +8,31 @@ const port = 5000;
 app.use(cors());
 app.use(express.json());
 
-// PostgreSQL Connection Setup
+// PostgreSQL Connection Setup (AWS RDS)
 const pool = new Pool({
-    user: "postgres",
-    host: "localhost",
-    database: "todo_db",
-    password: "2003",
+    user: "postgres",  
+    host: "todo-db.cv8i0os84iaq.ap-south-1.rds.amazonaws.com",  // Your AWS RDS endpoint
+    database: "todo_db",  // Your database name
+    password: "satishyadav",  // Your RDS password
     port: 5432,
+});
+
+// Check Database Connection
+pool.connect((err, client, release) => {
+    if (err) {
+        console.error("Error connecting to AWS RDS:", err);
+    } else {
+        console.log("Connected to AWS RDS PostgreSQL!");
+        release();
+    }
 });
 
 // Create Table (Run once)
 pool.query(
     "CREATE TABLE IF NOT EXISTS tasks (id SERIAL PRIMARY KEY, task TEXT NOT NULL)",
     (err) => {
-        if (err) console.error(err);
-        else console.log("Table created or already exists");
+        if (err) console.error("Error creating table:", err);
+        else console.log("Table is ready in RDS.");
     }
 );
 
@@ -63,7 +71,6 @@ app.delete("/tasks/:id", async (req, res) => {
     }
 });
 
-
 // Update a task (Edit Task)
 app.put("/tasks/:id", async (req, res) => {
     try {
@@ -90,7 +97,7 @@ app.put("/tasks/:id", async (req, res) => {
     }
 });
 
-
-app.listen(port, () => {
+// Start Server
+app.listen(port, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${port}`);
 });
