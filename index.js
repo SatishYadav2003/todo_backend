@@ -14,7 +14,8 @@ const pool = new Pool({
     host: "satish.cv8i0os84iaq.ap-south-1.rds.amazonaws.com", // Updated RDS endpoint
     database: "satish", // Updated database name
     password: "satishyadav", // Temporary password for testing
-    port: 5432
+    port: 5432,
+    ssl: { rejectUnauthorized: false }
 });
 
 // Check Database Connection
